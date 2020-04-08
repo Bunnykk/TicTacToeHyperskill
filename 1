@@ -1,0 +1,204 @@
+import java.util.Scanner;
+
+public class Main {
+    static final int FIELD_SIZE = 3;
+    static char[][] field = {{'_', '_', '_'}, {'_', '_', '_'}, {'_', '_', '_'}};                  //[FIELD_SIZE][FIELD_SIZE];
+    static final char SIGN_X = 'X';
+    static final char SIGN_O = 'O';
+    static final char SIGN_EMPTY = '_';
+    static Scanner scanner = new Scanner(System.in);
+    static int a;
+    static int b;
+    static boolean checkEndGame = false;
+
+    public static void main(String[] args) {
+
+        while (!checkEndGame) {
+            printTable();
+            turn(SIGN_X);
+
+            if ((isWinner(SIGN_O) && isWinner(SIGN_X)) || wrongQuantity()) {
+                System.out.println("Impossible");
+            }
+            if (isWinner(SIGN_X)) {
+                printTable();
+                System.out.println("X wins");
+                checkEndGame = true;
+                break;
+            }
+            if (isTableFull()) {
+                System.out.println("Draw");
+            }
+
+            printTable();
+            turn(SIGN_O);
+
+            if ((isWinner(SIGN_O) && isWinner(SIGN_X)) || wrongQuantity()) {
+                System.out.println("Impossible");
+            }
+            if (isWinner(SIGN_O)) {
+                printTable();
+                System.out.println("O wins");
+                checkEndGame = true;
+                break;
+            }
+            if (isTableFull()) {
+                System.out.println("Draw");
+            }
+
+        }
+
+
+    }
+
+
+    public static boolean isWinner(char cell) {
+        for (int i = 0; i < 3; i++) {
+            if ((field[i][0] == cell && field[i][1] == cell && field[i][2] == cell)
+                    || (field[0][i] == cell && field[1][i] == cell && field[2][i] == cell)) {
+                checkEndGame = true;
+                return true;
+            }
+        }
+        if ((field[0][0] == cell && field[1][1] == cell && field[2][2] == cell)
+                || (field[2][0] == cell && field[1][1] == cell && field[0][2] == cell)) {
+            checkEndGame = true;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static boolean isTableFull() {
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (field[i][j] == SIGN_EMPTY) {
+                    return false;
+                }
+            }
+        }
+        checkEndGame = true;
+        return true;
+    }
+
+    public static boolean isEmptyCellExists() {
+        for (int i = 0; i < 3; i++)
+            for (int j = 0; j < 3; j++)
+                if (field[i][j] == SIGN_EMPTY)
+                    return true;
+        return false;
+    }
+
+    public static boolean wrongQuantity() {
+        int countO = 0;
+        int countX = 0;
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (field[i][j] == SIGN_O) {
+                    countO++;
+                }
+                if (field[i][j] == SIGN_X) {
+                    countX++;
+                }
+            }
+        }
+        return Math.abs(countO - countX) > 1;
+    }
+
+    public static void printTable() {
+        System.out.println("---------");
+        for (int i = 0; i < 3; i++) {
+            System.out.print("| ");
+            for (int j = 0; j < 3; j++) {
+                System.out.print(field[i][j] + " ");
+            }
+            System.out.print("|");
+            System.out.println();
+        }
+        System.out.println("---------");
+    }
+
+    public static void turn(char point) {
+        boolean goodTurn = false;
+
+        while (!goodTurn) {
+            System.out.println("Enter the coordinates:");
+
+            String a1 = scanner.next();
+            String b1 = scanner.next();
+
+            if (isNumeric(a1)) {
+                if (isNumeric(b1)) {
+                    a = Integer.parseInt(a1) - 1;
+                    b = Integer.parseInt(b1) - 1;
+
+                    if (isWrongInput(a)) {
+                        if (isWrongInput(b)) {
+
+                            switchCoord(a);
+
+                            if (isCellValid(a, b)) {
+                                field[a][b] = point;
+                                goodTurn = true;
+                            } else {
+                                System.out.println("This cell is occupied! Choose another one!");
+                            }
+
+                        } else {
+                            System.out.println("Coordinates should be from 1 to 3!");
+                        }
+
+                    } else {
+                        System.out.println("Coordinates should be from 1 to 3!");
+                    }
+
+                } else {
+                    System.out.println("You should enter numbers!");
+                }
+
+            } else {
+                System.out.println("You should enter numbers!");
+            }
+
+        }
+    }
+
+    public static boolean isWrongInput(int num) {
+        return (num <= 2 && num >= 0);
+    }
+
+    public static boolean isNumeric(String strNum) {
+        try {
+            int d = Integer.parseInt(strNum);
+        } catch (NumberFormatException | NullPointerException nfe) {
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean isCellValid(int a, int b) {
+        return (field[a][b] == SIGN_EMPTY);
+    }
+
+    public static void switchCoord(int a) {
+        int temp = a;
+        switchCoordB(b);
+        b = temp;
+    }
+
+    public static void switchCoordB(int b) {
+        switch (b) {
+            case 0:
+                a = 2;
+                break;
+            case 1:
+                a = 1;
+                break;
+            case 2:
+                a = 0;
+                break;
+        }
+    }
+
+}
+
