@@ -1,68 +1,73 @@
+package tictactoe;
+
+
+
 import java.util.Scanner;
 
 public class Main {
     static final int FIELD_SIZE = 3;
-    static char[][] field = {{'_', '_', '_'}, {'_', '_', '_'}, {'_', '_', '_'}};                  //[FIELD_SIZE][FIELD_SIZE];
+    static char[][] field = new char[FIELD_SIZE][FIELD_SIZE];
     static final char SIGN_X = 'X';
     static final char SIGN_O = 'O';
     static final char SIGN_EMPTY = '_';
     static Scanner scanner = new Scanner(System.in);
     static int a;
     static int b;
-    static boolean checkEndGame = false;
+    static boolean check = false;
 
     public static void main(String[] args) {
 
-        while (!checkEndGame) {
-            printTable();
-            turn(SIGN_X);
+        char[] temp = scanner.next().trim().toCharArray();
 
+        for (int j = 0; j < 3; j++) {
+            field[0][j] = temp[j];
+            field[1][j] = temp[j + 3];
+            field[2][j] = temp[j + 6];
+        }
+
+        while (!check) {
+            printTable();
+            turn();
+            printTable();
             if ((isWinner(SIGN_O) && isWinner(SIGN_X)) || wrongQuantity()) {
                 System.out.println("Impossible");
+                break;
+            }
+
+            if (isWinner(SIGN_O)) {
+                System.out.println("O wins");
+                break;
             }
             if (isWinner(SIGN_X)) {
-                printTable();
+                System.out.println(a);
                 System.out.println("X wins");
-                checkEndGame = true;
                 break;
             }
             if (isTableFull()) {
                 System.out.println("Draw");
-            }
-
-            printTable();
-            turn(SIGN_O);
-
-            if ((isWinner(SIGN_O) && isWinner(SIGN_X)) || wrongQuantity()) {
-                System.out.println("Impossible");
-            }
-            if (isWinner(SIGN_O)) {
-                printTable();
-                System.out.println("O wins");
-                checkEndGame = true;
                 break;
             }
-            if (isTableFull()) {
-                System.out.println("Draw");
+
+            if (isEmptyCellExists()) {
+                System.out.println("Game not finished");
+                break;
             }
 
         }
 
-
     }
-
 
     public static boolean isWinner(char cell) {
         for (int i = 0; i < 3; i++) {
             if ((field[i][0] == cell && field[i][1] == cell && field[i][2] == cell)
                     || (field[0][i] == cell && field[1][i] == cell && field[2][i] == cell)) {
-                checkEndGame = true;
+                check = true;
                 return true;
             }
         }
         if ((field[0][0] == cell && field[1][1] == cell && field[2][2] == cell)
                 || (field[2][0] == cell && field[1][1] == cell && field[0][2] == cell)) {
-            checkEndGame = true;
+            check = true;
             return true;
         } else {
             return false;
@@ -77,7 +82,7 @@ public class Main {
                 }
             }
         }
-        checkEndGame = true;
+        check = true;
         return true;
     }
 
@@ -118,7 +123,7 @@ public class Main {
         System.out.println("---------");
     }
 
-    public static void turn(char point) {
+    public static void turn() {
         boolean goodTurn = false;
 
         while (!goodTurn) {
@@ -134,11 +139,11 @@ public class Main {
 
                     if (isWrongInput(a)) {
                         if (isWrongInput(b)) {
-
+                            // замена координат-------
                             switchCoord(a);
-
+                            // -------------------------
                             if (isCellValid(a, b)) {
-                                field[a][b] = point;
+                                field[a][b] = SIGN_X;
                                 goodTurn = true;
                             } else {
                                 System.out.println("This cell is occupied! Choose another one!");
@@ -188,17 +193,16 @@ public class Main {
 
     public static void switchCoordB(int b) {
         switch (b) {
-            case 0:
-                a = 2;
-                break;
-            case 1:
-                a = 1;
-                break;
-            case 2:
-                a = 0;
-                break;
+        case 0:
+            a = 2;
+            break;
+        case 1:
+            a = 1;
+            break;
+        case 2:
+            a = 0;
+            break;
         }
     }
 
 }
-
